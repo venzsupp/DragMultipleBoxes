@@ -1,31 +1,21 @@
 package com.example.dragmultipleboxes;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.icu.text.SymbolTable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
-import androidx.annotation.Nullable;
-
 public class BoxView extends View {
-    float x,dx;
-    float y,dy;
+    float x,y;
 
-
-    Rect rectangle;
 
     boolean actionType = true;
 
-    float[][] coordinates = new float[10][2];
+    float[][] coordinates = new float[100][2];
 
-    RectF rectArr[] = new RectF[10];
+    RectF rectangle[] = new RectF[100];
 
     int moveIndex = 0;
     public BoxView(Context context){
@@ -49,7 +39,7 @@ public class BoxView extends View {
                     coordinates[0][1] = this.y;
                 } else {
                     if (this.actionType) {
-                        for (int i=0; i < 10; i++) {
+                        for (int i=0; i < 100; i++) {
                             if(coordinates[i][0] == 0){
                                 coordinates[i][0] = this.x;
                                 coordinates[i][1] = this.y;
@@ -65,10 +55,10 @@ public class BoxView extends View {
             case MotionEvent.ACTION_MOVE:
                 // on mouse event
                 this.actionType = false;
-                for ( int i=0; i<10; i++) {
-                    System.out.println(rectArr[i]);
-                    if (rectArr[i] != null) {
-                        if (rectArr[i].contains(event.getX(),event.getY())) {
+                for ( int i=0; i<100; i++) {
+                    System.out.println(rectangle[i]);
+                    if (rectangle[i] != null) {
+                        if (rectangle[i].contains(event.getX(),event.getY())) {
                             this.moveIndex = i;
                             break;
                         }
@@ -91,19 +81,17 @@ public class BoxView extends View {
         super.onDraw(canvas);
         canvas.drawColor(Color.GRAY);
         Paint paint = new Paint();
-        for (int i=0; i < 10; i++) {
+        for (int i=0; i < 100; i++) {
             if (coordinates[i][0] > 0) {
                 float ltCord = coordinates[i][0];
                 float topCord = coordinates[i][1];
-                float boxSize = (this.getWidth()*10)/100;
+                int boxSize = (this.getWidth()*10)/100;
                 float rtCord = ltCord + boxSize;
                 float botCord = topCord + boxSize;
 
                 RectF rectf = new RectF(ltCord, topCord, rtCord,botCord);
-                rectArr[i] = rectf;
-                canvas.drawRect(rectArr[i], paint);
-
-                System.out.println("coord===="+i+"  :: "+coordinates[i][0]);
+                rectangle[i] = rectf;
+                canvas.drawRect(rectangle[i], paint);
             }
 
         }

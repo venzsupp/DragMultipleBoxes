@@ -1,6 +1,12 @@
 # DragMultipleBoxes
 Create multiple draggable boxes
 
+Requirement - Android Studio 
+Minimum SDk - API 29 - Android 10.0
+
+
+Description
+
 Android studio project with code base Kotlin and Java.
 
 The main activity page is in Kotlin programming language. The draggable multiple boxes are coded in Java.

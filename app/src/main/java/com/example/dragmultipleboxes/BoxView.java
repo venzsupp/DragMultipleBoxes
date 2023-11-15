@@ -18,6 +18,7 @@ public class BoxView extends View {
     RectF rectangle[] = new RectF[100];
 
     int moveIndex = 0;
+    int canvasWidth, canvasHeigth;
     public BoxView(Context context){
         super(context);
     }
@@ -64,7 +65,9 @@ public class BoxView extends View {
                         }
                     }
                 }
-                if (event.getX() > 0 && event.getY() > 0) {
+                float boxRight = event.getX()+(this.getWidth()*10)/100;
+                float boxBottom = event.getY()+(this.getWidth()*10)/100;
+                if (event.getX() > 0 && event.getY() > 0 && boxRight < this.getWidth() && boxBottom < this.getHeight()) {
                     coordinates[this.moveIndex ][0] = event.getX();
                     coordinates[this.moveIndex ][1] = event.getY();
                 }
@@ -80,6 +83,8 @@ public class BoxView extends View {
     {
         super.onDraw(canvas);
         canvas.drawColor(Color.GRAY);
+//        this.canvasWidth = canvas.getWidth();
+//        this.canvasHeigth = canvas.getWidth();
         Paint paint = new Paint();
         for (int i=0; i < 100; i++) {
             if (coordinates[i][0] > 0) {

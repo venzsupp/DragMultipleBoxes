@@ -10,15 +10,15 @@ import android.view.View;
 public class BoxView extends View {
     float x,y;
 
-
     boolean actionType = true;
 
-    float[][] coordinates = new float[100][2];
+    boolean clickAction = true;
 
-    RectF rectangle[] = new RectF[100];
+    float[][] coordinates = new float[1][2];
+
+    RectF rectangle[] = new RectF[1];
 
     int moveIndex = 0;
-    int canvasWidth, canvasHeigth;
     public BoxView(Context context){
         super(context);
     }
@@ -40,13 +40,20 @@ public class BoxView extends View {
                     coordinates[0][1] = this.y;
                 } else {
                     if (this.actionType) {
-                        for (int i=0; i < 100; i++) {
-                            if(coordinates[i][0] == 0){
+                        int i = 0;
+                        while (i < coordinates.length ) {
+                            if (rectangle[i] != null) {
+                                if (rectangle[i].contains(event.getX(),event.getY())) {
+                                    this.clickAction = false;
+                                    break;
+                                }
+                            } else if (coordinates[i][0] == 0) {
                                 coordinates[i][0] = this.x;
                                 coordinates[i][1] = this.y;
+                                this.clickAction = true;
                                 break;
                             }
-
+                            i++;
                         }
                     }
                 }
@@ -56,15 +63,18 @@ public class BoxView extends View {
             case MotionEvent.ACTION_MOVE:
                 // on mouse event
                 this.actionType = false;
-                for ( int i=0; i<100; i++) {
-                    System.out.println(rectangle[i]);
+                this.clickAction = false;
+                int i = 0;
+                while (i < coordinates.length ) {
                     if (rectangle[i] != null) {
                         if (rectangle[i].contains(event.getX(),event.getY())) {
                             this.moveIndex = i;
                             break;
                         }
                     }
+                    i++;
                 }
+
                 float boxRight = event.getX()+(this.getWidth()*10)/100;
                 float boxBottom = event.getY()+(this.getWidth()*10)/100;
                 if (event.getX() > 0 && event.getY() > 0 && boxRight < this.getWidth() && boxBottom < this.getHeight()) {
@@ -83,11 +93,12 @@ public class BoxView extends View {
     {
         super.onDraw(canvas);
         canvas.drawColor(Color.GRAY);
-//        this.canvasWidth = canvas.getWidth();
-//        this.canvasHeigth = canvas.getWidth();
         Paint paint = new Paint();
-        for (int i=0; i < 100; i++) {
-            if (coordinates[i][0] > 0) {
+        int i = 0;
+        int coordinateSize = 0;
+        boolean addCoord = true;
+        while(coordinateSize < coordinates.length ){
+            if (coordinates[i][0] > 0)  {
                 float ltCord = coordinates[i][0];
                 float topCord = coordinates[i][1];
                 int boxSize = (this.getWidth()*10)/100;
@@ -97,10 +108,25 @@ public class BoxView extends View {
                 RectF rectf = new RectF(ltCord, topCord, rtCord,botCord);
                 rectangle[i] = rectf;
                 canvas.drawRect(rectangle[i], paint);
+                i++;
+
+                if (addCoord  && this.clickAction) {
+                    //dynamically increase rectangle array
+                    RectF tempRectangle[] = new RectF[rectangle.length+1];
+                    System.arraycopy(rectangle,0,tempRectangle,0,rectangle.length);
+                    rectangle = tempRectangle;
+
+                    //dynamically increase coordinate array
+                    float[][] tempCoord = new float[coordinates.length+1][2];
+                    System.arraycopy(coordinates,0,tempCoord,0,coordinates.length);
+                    coordinates = tempCoord;
+
+                    addCoord = false;
+                }
+
             }
-
+            coordinateSize++;
         }
-
     }
 
 }
